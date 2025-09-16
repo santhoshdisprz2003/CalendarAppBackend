@@ -6,8 +6,8 @@ namespace CalendarAppBackend.Models
         public string Title { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
 
-        public DateTime StartTime { get; set; } // datetime
-        public DateTime EndTime { get; set; }   // datetime
+        public DateTimeOffset StartTime { get; set; } // datetime
+        public DateTimeOffset EndTime { get; set; }   // datetime
 
         // ✅ Add missing properties
         public bool IsAllDay { get; set; } = false;

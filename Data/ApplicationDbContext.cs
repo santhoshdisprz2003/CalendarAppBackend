@@ -12,8 +12,22 @@ namespace CalendarAppBackend.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // Configure Appointment entity
             modelBuilder.Entity<Appointment>().ToTable("Appointments");
+
+            // ✅ Ensure UTC storage
+            modelBuilder.Entity<Appointment>()
+                .Property(a => a.StartTime)
+                .HasConversion(
+                    v => v.UtcDateTime,   // store as UTC
+                    v => DateTime.SpecifyKind(v, DateTimeKind.Utc)
+                );
+
+            modelBuilder.Entity<Appointment>()
+                .Property(a => a.EndTime)
+                .HasConversion(
+                    v => v.UtcDateTime,
+                    v => DateTime.SpecifyKind(v, DateTimeKind.Utc)
+                );
         }
     }
 }

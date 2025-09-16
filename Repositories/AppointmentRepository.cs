@@ -32,6 +32,7 @@ namespace CalendarAppBackend.Repositories
             );
         }
 
+
         public async Task<Appointment> AddAsync(Appointment appointment)
         {
             _context.Appointments.Add(appointment);

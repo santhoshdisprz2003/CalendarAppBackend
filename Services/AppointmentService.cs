@@ -7,7 +7,6 @@ namespace CalendarAppBackend.Services
     {
         private readonly IAppointmentRepository _repository;
 
-        // ✅ Keep the constant inside the class
         private const string ConflictMessage = "Appointment conflicts with an existing appointment.";
 
         public AppointmentService(IAppointmentRepository repository)
