@@ -5,22 +5,22 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// ✅ Register DbContext with SQL Server
+//  Register DbContext with SQL Server
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// ✅ Register Repositories & Services for DI
+//  Register Repositories & Services for DI
 builder.Services.AddScoped<IAppointmentRepository, AppointmentRepository>();
 builder.Services.AddScoped<IAppointmentService, AppointmentService>();
 
-// ✅ Add Controllers
+//  Add Controllers
 builder.Services.AddControllers();
 
-// ✅ Add Swagger/OpenAPI
+//  Add Swagger/OpenAPI
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// ✅ Configure CORS for React app
+//  Configure CORS for React app
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp", policy =>
@@ -33,7 +33,7 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-// ✅ Enable Swagger for all environments
+//  Enable Swagger for all environments
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
@@ -41,11 +41,11 @@ app.UseSwaggerUI(c =>
     c.RoutePrefix = "swagger"; // Swagger UI at /swagger
 });
 
-// ✅ Enable CORS
+//  Enable CORS
 app.UseCors("AllowReactApp");
 
-// ✅ Map controllers (API endpoints)
+//  Map controllers (API endpoints)
 app.MapControllers();
 
-// ✅ Run the app
+//  Run the app
 app.Run();

@@ -1,54 +1,34 @@
 openapi: 3.0.1
 info:
-  title: CalendarApp API
-  version: v1
-  description: API for managing calendar appointments
-servers:
-  - url: http://localhost:5000/api
+  title: Backend
+  version: '1.0'
 paths:
-  /appointments:
+  /api/Appointments:
     get:
-      summary: Get all appointments
       tags:
         - Appointments
       responses:
-        "200":
-          description: List of appointments
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/Appointment"
+        '200':
+          description: Success
     post:
-      summary: Create a new appointment
       tags:
         - Appointments
       requestBody:
-        required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Appointment"
+              $ref: '#/components/schemas/Appointment'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/Appointment'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/Appointment'
       responses:
-        "201":
-          description: Appointment created
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Appointment"
-        "409":
-          description: Conflict (overlapping appointment)
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-  /appointments/{id}:
+        '200':
+          description: Success
+  '/api/Appointments/{id}':
     put:
-      summary: Update an appointment
       tags:
         - Appointments
       parameters:
@@ -57,25 +37,22 @@ paths:
           required: true
           schema:
             type: integer
+            format: int32
       requestBody:
-        required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Appointment"
+              $ref: '#/components/schemas/Appointment'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/Appointment'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/Appointment'
       responses:
-        "200":
-          description: Updated appointment
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Appointment"
-        "404":
-          description: Appointment not found
-        "409":
-          description: Conflict (overlapping appointment)
+        '200':
+          description: Success
     delete:
-      summary: Delete an appointment
       tags:
         - Appointments
       parameters:
@@ -84,11 +61,10 @@ paths:
           required: true
           schema:
             type: integer
+            format: int32
       responses:
-        "204":
-          description: Appointment deleted successfully
-        "404":
-          description: Appointment not found
+        '200':
+          description: Success
 components:
   schemas:
     Appointment:
@@ -96,10 +72,13 @@ components:
       properties:
         id:
           type: integer
+          format: int32
         title:
           type: string
+          nullable: true
         description:
           type: string
+          nullable: true
         startTime:
           type: string
           format: date-time
@@ -110,5 +89,8 @@ components:
           type: boolean
         location:
           type: string
+          nullable: true
         attendees:
           type: string
+          nullable: true
+      additionalProperties: false
