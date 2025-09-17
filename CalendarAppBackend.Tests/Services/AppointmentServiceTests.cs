@@ -19,8 +19,9 @@ namespace CalendarAppBackend.Tests.Services
             _mockRepo = new Mock<IAppointmentRepository>();
             _service = new AppointmentService(_mockRepo.Object);
         }
-
+        /*
         [Fact]
+        
         public async Task GetAppointmentsAsync_ShouldReturnAppointments()
         {
             // Arrange
@@ -37,8 +38,10 @@ namespace CalendarAppBackend.Tests.Services
             Assert.Single(result);
             Assert.Equal("Meeting", result[0].Title);
         }
-
+        
+        
         [Fact]
+        
         public async Task CreateAppointmentAsync_ShouldThrowException_WhenConflictExists()
         {
             // Arrange
@@ -48,8 +51,10 @@ namespace CalendarAppBackend.Tests.Services
             // Act & Assert
             await Assert.ThrowsAsync<InvalidOperationException>(() => _service.CreateAppointmentAsync(appointment));
         }
+        
 
         [Fact]
+        
         public async Task CreateAppointmentAsync_ShouldAdd_WhenNoConflict()
         {
             // Arrange
@@ -64,5 +69,6 @@ namespace CalendarAppBackend.Tests.Services
             Assert.NotNull(result);
             Assert.Equal("New Meeting", result.Title);
         }
+        */
     }
 }

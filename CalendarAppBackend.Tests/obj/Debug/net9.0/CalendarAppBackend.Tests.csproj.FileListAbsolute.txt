@@ -1,11 +1,4 @@
-C:\Users\santhosh.d_disprz\Documents\CalendarAppBackend\CalendarAppBackend.Tests\bin\Debug\net9.0\.msCoverageSourceRootsMapping_CalendarAppBackend.Tests
 C:\Users\santhosh.d_disprz\Documents\CalendarAppBackend\CalendarAppBackend.Tests\bin\Debug\net9.0\CoverletSourceRootsMapping_CalendarAppBackend.Tests
-C:\Users\santhosh.d_disprz\Documents\CalendarAppBackend\CalendarAppBackend.Tests\obj\Debug\net9.0\CalendarAppBackend.Tests.csproj.AssemblyReference.cache
-C:\Users\santhosh.d_disprz\Documents\CalendarAppBackend\CalendarAppBackend.Tests\obj\Debug\net9.0\CalendarAppBackend.Tests.GeneratedMSBuildEditorConfig.editorconfig
-C:\Users\santhosh.d_disprz\Documents\CalendarAppBackend\CalendarAppBackend.Tests\obj\Debug\net9.0\CalendarAppBackend.Tests.AssemblyInfoInputs.cache
-C:\Users\santhosh.d_disprz\Documents\CalendarAppBackend\CalendarAppBackend.Tests\obj\Debug\net9.0\CalendarAppBackend.Tests.AssemblyInfo.cs
-C:\Users\santhosh.d_disprz\Documents\CalendarAppBackend\CalendarAppBackend.Tests\obj\Debug\net9.0\CalendarAppBackend.Tests.csproj.CoreCompileInputs.cache
-C:\Users\santhosh.d_disprz\Documents\CalendarAppBackend\CalendarAppBackend.Tests\obj\Debug\net9.0\CalendarAppBackend.Tests.sourcelink.json
 C:\Users\santhosh.d_disprz\Documents\CalendarAppBackend\CalendarAppBackend.Tests\bin\Debug\net9.0\testhost.dll
 C:\Users\santhosh.d_disprz\Documents\CalendarAppBackend\CalendarAppBackend.Tests\bin\Debug\net9.0\Backend.deps.json
 C:\Users\santhosh.d_disprz\Documents\CalendarAppBackend\CalendarAppBackend.Tests\bin\Debug\net9.0\Backend.runtimeconfig.json
@@ -13,7 +6,7 @@ C:\Users\santhosh.d_disprz\Documents\CalendarAppBackend\CalendarAppBackend.Tests
 C:\Users\santhosh.d_disprz\Documents\CalendarAppBackend\CalendarAppBackend.Tests\bin\Debug\net9.0\Backend.staticwebassets.endpoints.json
 C:\Users\santhosh.d_disprz\Documents\CalendarAppBackend\CalendarAppBackend.Tests\bin\Debug\net9.0\Backend.exe
 C:\Users\santhosh.d_disprz\Documents\CalendarAppBackend\CalendarAppBackend.Tests\bin\Debug\net9.0\testhost.exe
-C:\Users\santhosh.d_disprz\Documents\CalendarAppBackend\CalendarAppBackend.Tests\bin\Debug\net9.0\xunit.runner.visualstudio.testadapter.dll
+C:\Users\santhosh.d_disprz\Documents\CalendarAppBackend\CalendarAppBackend.Tests\bin\Debug\net9.0\xunit.runner.visualstudio.dotnetcore.testadapter.dll
 C:\Users\santhosh.d_disprz\Documents\CalendarAppBackend\CalendarAppBackend.Tests\bin\Debug\net9.0\xunit.runner.reporters.netcoreapp10.dll
 C:\Users\santhosh.d_disprz\Documents\CalendarAppBackend\CalendarAppBackend.Tests\bin\Debug\net9.0\xunit.runner.utility.netcoreapp10.dll
 C:\Users\santhosh.d_disprz\Documents\CalendarAppBackend\CalendarAppBackend.Tests\bin\Debug\net9.0\CalendarAppBackend.Tests.deps.json
@@ -23,7 +16,6 @@ C:\Users\santhosh.d_disprz\Documents\CalendarAppBackend\CalendarAppBackend.Tests
 C:\Users\santhosh.d_disprz\Documents\CalendarAppBackend\CalendarAppBackend.Tests\bin\Debug\net9.0\Azure.Core.dll
 C:\Users\santhosh.d_disprz\Documents\CalendarAppBackend\CalendarAppBackend.Tests\bin\Debug\net9.0\Azure.Identity.dll
 C:\Users\santhosh.d_disprz\Documents\CalendarAppBackend\CalendarAppBackend.Tests\bin\Debug\net9.0\Castle.Core.dll
-C:\Users\santhosh.d_disprz\Documents\CalendarAppBackend\CalendarAppBackend.Tests\bin\Debug\net9.0\FluentAssertions.dll
 C:\Users\santhosh.d_disprz\Documents\CalendarAppBackend\CalendarAppBackend.Tests\bin\Debug\net9.0\Microsoft.Bcl.AsyncInterfaces.dll
 C:\Users\santhosh.d_disprz\Documents\CalendarAppBackend\CalendarAppBackend.Tests\bin\Debug\net9.0\Microsoft.VisualStudio.CodeCoverage.Shim.dll
 C:\Users\santhosh.d_disprz\Documents\CalendarAppBackend\CalendarAppBackend.Tests\bin\Debug\net9.0\Microsoft.Data.SqlClient.dll
@@ -32,14 +24,6 @@ C:\Users\santhosh.d_disprz\Documents\CalendarAppBackend\CalendarAppBackend.Tests
 C:\Users\santhosh.d_disprz\Documents\CalendarAppBackend\CalendarAppBackend.Tests\bin\Debug\net9.0\Microsoft.EntityFrameworkCore.InMemory.dll
 C:\Users\santhosh.d_disprz\Documents\CalendarAppBackend\CalendarAppBackend.Tests\bin\Debug\net9.0\Microsoft.EntityFrameworkCore.Relational.dll
 C:\Users\santhosh.d_disprz\Documents\CalendarAppBackend\CalendarAppBackend.Tests\bin\Debug\net9.0\Microsoft.EntityFrameworkCore.SqlServer.dll
-C:\Users\santhosh.d_disprz\Documents\CalendarAppBackend\CalendarAppBackend.Tests\bin\Debug\net9.0\Microsoft.Extensions.Caching.Abstractions.dll
-C:\Users\santhosh.d_disprz\Documents\CalendarAppBackend\CalendarAppBackend.Tests\bin\Debug\net9.0\Microsoft.Extensions.Caching.Memory.dll
-C:\Users\santhosh.d_disprz\Documents\CalendarAppBackend\CalendarAppBackend.Tests\bin\Debug\net9.0\Microsoft.Extensions.DependencyInjection.dll
-C:\Users\santhosh.d_disprz\Documents\CalendarAppBackend\CalendarAppBackend.Tests\bin\Debug\net9.0\Microsoft.Extensions.DependencyInjection.Abstractions.dll
-C:\Users\santhosh.d_disprz\Documents\CalendarAppBackend\CalendarAppBackend.Tests\bin\Debug\net9.0\Microsoft.Extensions.Logging.dll
-C:\Users\santhosh.d_disprz\Documents\CalendarAppBackend\CalendarAppBackend.Tests\bin\Debug\net9.0\Microsoft.Extensions.Logging.Abstractions.dll
-C:\Users\santhosh.d_disprz\Documents\CalendarAppBackend\CalendarAppBackend.Tests\bin\Debug\net9.0\Microsoft.Extensions.Options.dll
-C:\Users\santhosh.d_disprz\Documents\CalendarAppBackend\CalendarAppBackend.Tests\bin\Debug\net9.0\Microsoft.Extensions.Primitives.dll
 C:\Users\santhosh.d_disprz\Documents\CalendarAppBackend\CalendarAppBackend.Tests\bin\Debug\net9.0\Microsoft.Identity.Client.dll
 C:\Users\santhosh.d_disprz\Documents\CalendarAppBackend\CalendarAppBackend.Tests\bin\Debug\net9.0\Microsoft.Identity.Client.Extensions.Msal.dll
 C:\Users\santhosh.d_disprz\Documents\CalendarAppBackend\CalendarAppBackend.Tests\bin\Debug\net9.0\Microsoft.IdentityModel.Abstractions.dll
@@ -154,6 +138,12 @@ C:\Users\santhosh.d_disprz\Documents\CalendarAppBackend\CalendarAppBackend.Tests
 C:\Users\santhosh.d_disprz\Documents\CalendarAppBackend\CalendarAppBackend.Tests\bin\Debug\net9.0\runtimes\win\lib\netcoreapp3.0\System.Windows.Extensions.dll
 C:\Users\santhosh.d_disprz\Documents\CalendarAppBackend\CalendarAppBackend.Tests\bin\Debug\net9.0\Backend.dll
 C:\Users\santhosh.d_disprz\Documents\CalendarAppBackend\CalendarAppBackend.Tests\bin\Debug\net9.0\Backend.pdb
+C:\Users\santhosh.d_disprz\Documents\CalendarAppBackend\CalendarAppBackend.Tests\obj\Debug\net9.0\CalendarAppBackend.Tests.csproj.AssemblyReference.cache
+C:\Users\santhosh.d_disprz\Documents\CalendarAppBackend\CalendarAppBackend.Tests\obj\Debug\net9.0\CalendarAppBackend.Tests.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\santhosh.d_disprz\Documents\CalendarAppBackend\CalendarAppBackend.Tests\obj\Debug\net9.0\CalendarAppBackend.Tests.AssemblyInfoInputs.cache
+C:\Users\santhosh.d_disprz\Documents\CalendarAppBackend\CalendarAppBackend.Tests\obj\Debug\net9.0\CalendarAppBackend.Tests.AssemblyInfo.cs
+C:\Users\santhosh.d_disprz\Documents\CalendarAppBackend\CalendarAppBackend.Tests\obj\Debug\net9.0\CalendarAppBackend.Tests.csproj.CoreCompileInputs.cache
+C:\Users\santhosh.d_disprz\Documents\CalendarAppBackend\CalendarAppBackend.Tests\obj\Debug\net9.0\CalendarAppBackend.Tests.sourcelink.json
 C:\Users\santhosh.d_disprz\Documents\CalendarAppBackend\CalendarAppBackend.Tests\obj\Debug\net9.0\Calendar.34977702.Up2Date
 C:\Users\santhosh.d_disprz\Documents\CalendarAppBackend\CalendarAppBackend.Tests\obj\Debug\net9.0\CalendarAppBackend.Tests.dll
 C:\Users\santhosh.d_disprz\Documents\CalendarAppBackend\CalendarAppBackend.Tests\obj\Debug\net9.0\refint\CalendarAppBackend.Tests.dll
