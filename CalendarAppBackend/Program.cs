@@ -2,25 +2,34 @@
 using CalendarAppBackend.Repositories;
 using CalendarAppBackend.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.Swagger;
+using Microsoft.OpenApi.Writers;
 
 var builder = WebApplication.CreateBuilder(args);
 
-//  Register DbContext with SQL Server
+// Register DbContext with SQL Server
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-//  Register Repositories & Services for DI
+// Register Repositories & Services for DI
 builder.Services.AddScoped<IAppointmentRepository, AppointmentRepository>();
 builder.Services.AddScoped<IAppointmentService, AppointmentService>();
 
-//  Add Controllers
+// Add Controllers
 builder.Services.AddControllers();
 
-//  Add Swagger/OpenAPI
+// Add Swagger/OpenAPI
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "CalendarApp API",
+        Version = "v1"
+    });
+});
 
-//  Configure CORS for React app
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp", policy =>
@@ -33,19 +42,29 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-//  Enable Swagger for all environments
+//  Generate YAML file automatically on startup
+using (var scope = app.Services.CreateScope())
+{
+    var provider = scope.ServiceProvider.GetRequiredService<ISwaggerProvider>();
+    var swaggerDoc = provider.GetSwagger("v1");
+
+    var yamlPath = Path.Combine(app.Environment.ContentRootPath, "swagger", "swagger.yaml");
+    Directory.CreateDirectory(Path.GetDirectoryName(yamlPath)!);
+
+    using var streamWriter = new StreamWriter(yamlPath);
+    var yamlWriter = new OpenApiYamlWriter(streamWriter);
+    swaggerDoc.SerializeAsV3(yamlWriter);
+    streamWriter.Flush(); // ensure file is written
+}
+
+// ✅ Always enable Swagger (dev + prod)
 app.UseSwagger();
-app.UseSwaggerUI(c =>   
+app.UseSwaggerUI(c =>
 {
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "CalendarApp API v1");
-    c.RoutePrefix = "swagger"; // Swagger UI at /swagger
+    c.RoutePrefix = "swagger"; // open at /swagger
 });
 
-//  Enable CORS
 app.UseCors("AllowReactApp");
-
-//  Map controllers (API endpoints)
 app.MapControllers();
-
-//  Run the app
 app.Run();

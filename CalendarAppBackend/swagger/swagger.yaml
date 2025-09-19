@@ -1,7 +1,7 @@
 openapi: 3.0.1
 info:
-  title: Backend
-  version: '1.0'
+  title: CalendarApp API
+  version: v1
 paths:
   /api/Appointments:
     get:
