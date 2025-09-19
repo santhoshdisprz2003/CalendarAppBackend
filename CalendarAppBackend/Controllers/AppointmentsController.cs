@@ -51,7 +51,7 @@ namespace CalendarAppBackend.Controllers
             }
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}")]        
         public async Task<IActionResult> DeleteAppointment(int id)
         {
             var deleted = await _service.DeleteAppointmentAsync(id);

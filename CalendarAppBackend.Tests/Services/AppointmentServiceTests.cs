@@ -19,7 +19,7 @@ namespace CalendarAppBackend.Tests.Services
             _mockRepo = new Mock<IAppointmentRepository>();
             _service = new AppointmentService(_mockRepo.Object);
         }
-        /*
+        
         [Fact]
         
         public async Task GetAppointmentsAsync_ShouldReturnAppointments()
@@ -69,6 +69,6 @@ namespace CalendarAppBackend.Tests.Services
             Assert.NotNull(result);
             Assert.Equal("New Meeting", result.Title);
         }
-        */
+        
     }
 }
