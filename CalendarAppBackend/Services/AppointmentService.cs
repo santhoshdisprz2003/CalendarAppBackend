@@ -6,7 +6,6 @@ namespace CalendarAppBackend.Services
     public class AppointmentService : IAppointmentService
     {
         private readonly IAppointmentRepository _repository;
-
         private const string ConflictMessage = "Appointment conflicts with an existing appointment.";
 
         public AppointmentService(IAppointmentRepository repository)
@@ -21,6 +20,10 @@ namespace CalendarAppBackend.Services
 
         public async Task<Appointment?> CreateAppointmentAsync(Appointment appointment)
         {
+            
+            AppointmentValidator.Validate(appointment);
+
+            
             if (await _repository.HasConflictAsync(appointment))
             {
                 throw new InvalidOperationException(ConflictMessage);
@@ -33,6 +36,10 @@ namespace CalendarAppBackend.Services
         {
             updatedAppointment.Id = id;
 
+            
+            AppointmentValidator.Validate(updatedAppointment);
+
+            
             if (await _repository.HasConflictAsync(updatedAppointment, id))
             {
                 throw new InvalidOperationException(ConflictMessage);

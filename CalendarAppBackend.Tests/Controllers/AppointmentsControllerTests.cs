@@ -26,7 +26,7 @@ namespace CalendarAppBackend.Tests.Controllers
             // Arrange
             var appointments = new List<Appointment>
             {
-                new Appointment { Id = 1, Title = "Test Appointment" }
+                new Appointment { Id = 1, Title = "Test Appointment in the Appointment" }
             };
             _mockService.Setup(s => s.GetAppointmentsAsync()).ReturnsAsync(appointments);
 
