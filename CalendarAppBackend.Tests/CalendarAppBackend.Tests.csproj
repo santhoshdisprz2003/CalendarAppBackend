@@ -24,6 +24,7 @@
   <ItemGroup>
     <Compile Remove="UnitTest1.cs" />
     <Compile Remove="Repositories\AppointmentRepositoryTests.cs" />
+    <!-- <Compile Remove="Services\AppointmentServiceTests.cs" /> -->
   </ItemGroup>
 
 </Project>
