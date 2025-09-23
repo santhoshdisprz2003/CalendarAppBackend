@@ -1,56 +1,78 @@
+using CalendarAppBackend.Data;
 using CalendarAppBackend.Models;
-using CalendarAppBackend.Repositories;
+using Microsoft.EntityFrameworkCore;
 
-namespace CalendarAppBackend.Services
+namespace CalendarAppBackend.Services;
+
+public class AppointmentService : IAppointmentService
 {
-    public class AppointmentService : IAppointmentService
+    private readonly ApplicationDbContext _context;
+
+    public AppointmentService(ApplicationDbContext context)
     {
-        private readonly IAppointmentRepository _repository;
-        private const string ConflictMessage = "Appointment conflicts with an existing appointment.";
+        _context = context;
+    }
 
-        public AppointmentService(IAppointmentRepository repository)
-        {
-            _repository = repository;
-        }
+    // Get all appointments for a user
+    public async Task<IEnumerable<Appointment>> GetAppointmentsByUserAsync(int userId)
+    {
+        // Return empty list if userId is invalid
+        if (userId <= 0) return Enumerable.Empty<Appointment>();
 
-        public async Task<List<Appointment>> GetAppointmentsAsync()
-        {
-            return await _repository.GetAppointmentsAsync();
-        }
+        return await _context.Appointments
+            .Where(a => a.UserId == userId)
+            .ToListAsync();
+    }
 
-        public async Task<Appointment?> CreateAppointmentAsync(Appointment appointment)
-        {
-            
-            AppointmentValidator.Validate(appointment);
+    // Create a new appointment
+    public async Task<Appointment> CreateAppointmentAsync(Appointment appointment)
+    {
+        if (appointment == null)
+            throw new ArgumentNullException(nameof(appointment), "Appointment cannot be null");
 
-            
-            if (await _repository.HasConflictAsync(appointment))
-            {
-                throw new InvalidOperationException(ConflictMessage);
-            }
+        if (appointment.UserId <= 0)
+            throw new InvalidOperationException("Invalid User ID");
 
-            return await _repository.AddAsync(appointment);
-        }
+        _context.Appointments.Add(appointment);
+        await _context.SaveChangesAsync();
+        return appointment;
+    }
 
-        public async Task<Appointment?> UpdateAppointmentAsync(int id, Appointment updatedAppointment)
-        {
-            updatedAppointment.Id = id;
+    // Update an existing appointment for a specific user
+    public async Task<Appointment?> UpdateAppointmentForUserAsync(int id, int userId, Appointment appointment)
+    {
+        if (userId <= 0) return null;
 
-            
-            AppointmentValidator.Validate(updatedAppointment);
+        var existing = await _context.Appointments
+            .FirstOrDefaultAsync(a => a.Id == id && a.UserId == userId);
 
-            
-            if (await _repository.HasConflictAsync(updatedAppointment, id))
-            {
-                throw new InvalidOperationException(ConflictMessage);
-            }
+        if (existing == null) return null;
 
-            return await _repository.UpdateAsync(updatedAppointment);
-        }
+        // Update only allowed fields
+        existing.Title = appointment.Title;
+        existing.Description = appointment.Description;
+        existing.StartTime = appointment.StartTime;
+        existing.EndTime = appointment.EndTime;
+        existing.IsAllDay = appointment.IsAllDay;
+        existing.Location = appointment.Location;
+        existing.Attendees = appointment.Attendees;
 
-        public async Task<bool> DeleteAppointmentAsync(int id)
-        {
-            return await _repository.DeleteAsync(id);
-        }
+        await _context.SaveChangesAsync();
+        return existing;
+    }
+
+    // Delete an appointment for a specific user
+    public async Task<bool> DeleteAppointmentForUserAsync(int id, int userId)
+    {
+        if (userId <= 0) return false;
+
+        var existing = await _context.Appointments
+            .FirstOrDefaultAsync(a => a.Id == id && a.UserId == userId);
+
+        if (existing == null) return false;
+
+        _context.Appointments.Remove(existing);
+        await _context.SaveChangesAsync();
+        return true;
     }
 }

@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace CalendarAppBackend.Models
 {
     public class Appointment
@@ -12,5 +14,11 @@ namespace CalendarAppBackend.Models
         public bool IsAllDay { get; set; } = false;
         public string Location { get; set; } = string.Empty;
         public string Attendees { get; set; } = string.Empty;
+
+        // 🔑 Relationship to User
+        public int UserId { get; set; }     
+        [JsonIgnore]       // Foreign Key
+        public User User { get; set; } = null!;
+            // Navigation Property
     }
 }

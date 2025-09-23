@@ -17,13 +17,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Appointment'
+              $ref: '#/components/schemas/AppointmentCreateDto'
           text/json:
             schema:
-              $ref: '#/components/schemas/Appointment'
+              $ref: '#/components/schemas/AppointmentCreateDto'
           application/*+json:
             schema:
-              $ref: '#/components/schemas/Appointment'
+              $ref: '#/components/schemas/AppointmentCreateDto'
       responses:
         '200':
           description: Success
@@ -42,13 +42,13 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Appointment'
+              $ref: '#/components/schemas/AppointmentUpdateDto'
           text/json:
             schema:
-              $ref: '#/components/schemas/Appointment'
+              $ref: '#/components/schemas/AppointmentUpdateDto'
           application/*+json:
             schema:
-              $ref: '#/components/schemas/Appointment'
+              $ref: '#/components/schemas/AppointmentUpdateDto'
       responses:
         '200':
           description: Success
@@ -65,14 +65,47 @@ paths:
       responses:
         '200':
           description: Success
+  /api/Auth/register:
+    post:
+      tags:
+        - Auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        '200':
+          description: Success
+  /api/Auth/login:
+    post:
+      tags:
+        - Auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200':
+          description: Success
 components:
   schemas:
-    Appointment:
+    AppointmentCreateDto:
       type: object
       properties:
-        id:
-          type: integer
-          format: int32
         title:
           type: string
           nullable: true
@@ -94,3 +127,55 @@ components:
           type: string
           nullable: true
       additionalProperties: false
+    AppointmentUpdateDto:
+      type: object
+      properties:
+        title:
+          type: string
+          nullable: true
+        description:
+          type: string
+          nullable: true
+        startTime:
+          type: string
+          format: date-time
+        endTime:
+          type: string
+          format: date-time
+        isAllDay:
+          type: boolean
+        location:
+          type: string
+          nullable: true
+        attendees:
+          type: string
+          nullable: true
+      additionalProperties: false
+    LoginRequest:
+      type: object
+      properties:
+        username:
+          type: string
+          nullable: true
+        password:
+          type: string
+          nullable: true
+      additionalProperties: false
+    RegisterRequest:
+      type: object
+      properties:
+        username:
+          type: string
+          nullable: true
+        password:
+          type: string
+          nullable: true
+      additionalProperties: false
+  securitySchemes:
+    Bearer:
+      type: apiKey
+      description: 'Please enter JWT with Bearer into field. Example: Bearer {your token}'
+      name: Authorization
+      in: header
+security:
+  - Bearer: [ ]
