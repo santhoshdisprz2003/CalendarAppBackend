@@ -33,6 +33,17 @@ public class AppointmentService : IAppointmentService
         if (appointment.UserId <= 0)
             throw new InvalidOperationException("Invalid User ID");
 
+            // 🔹 Run validation here
+        AppointmentValidator.Validate(appointment);
+
+         bool hasConflict = await _context.Appointments
+        .AnyAsync(a => a.UserId == appointment.UserId &&
+                       ((appointment.StartTime < a.EndTime && appointment.EndTime > a.StartTime)));
+
+    if (hasConflict)
+        throw new InvalidOperationException("This appointment conflicts with an existing one.");
+
+
         _context.Appointments.Add(appointment);
         await _context.SaveChangesAsync();
         return appointment;
@@ -47,6 +58,17 @@ public class AppointmentService : IAppointmentService
             .FirstOrDefaultAsync(a => a.Id == id && a.UserId == userId);
 
         if (existing == null) return null;
+
+        // 🔹 Run validation here
+    AppointmentValidator.Validate(appointment);
+
+     bool hasConflict = await _context.Appointments
+        .AnyAsync(a => a.UserId == appointment.UserId &&
+                       ((appointment.StartTime < a.EndTime && appointment.EndTime > a.StartTime)));
+
+    if (hasConflict)
+        throw new InvalidOperationException("This appointment conflicts with an existing one.");
+
 
         // Update only allowed fields
         existing.Title = appointment.Title;

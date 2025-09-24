@@ -41,7 +41,6 @@ namespace CalendarAppBackend.Controllers
             return Ok(result);
         }
 
-
         [HttpPost]
         public async Task<IActionResult> CreateAppointment([FromBody] AppointmentCreateDto dto)
         {
@@ -71,7 +70,13 @@ namespace CalendarAppBackend.Controllers
             }
             catch (InvalidOperationException ex)
             {
-                return Conflict(new { message = ex.Message });
+                if (ex.Message.Contains("conflicts", StringComparison.OrdinalIgnoreCase))
+                    return Conflict(new { message = ex.Message }); // 409 Conflict
+                return BadRequest(new { message = ex.Message }); // 400 Bad Request
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Something went wrong", detail = ex.Message });
             }
         }
 
@@ -98,11 +103,24 @@ namespace CalendarAppBackend.Controllers
                 UserId = userId
             };
 
-            var updated = await _service.UpdateAppointmentForUserAsync(id, userId, appointment);
-            if (updated == null)
-                return NotFound(new { message = "Appointment not found or not yours" });
+            try
+            {
+                var updated = await _service.UpdateAppointmentForUserAsync(id, userId, appointment);
+                if (updated == null)
+                    return NotFound(new { message = "Appointment not found or not yours" });
 
-            return Ok(updated);
+                return Ok(updated);
+            }
+            catch (InvalidOperationException ex)
+            {
+                if (ex.Message.Contains("conflicts", StringComparison.OrdinalIgnoreCase))
+                    return Conflict(new { message = ex.Message }); // 409 Conflict
+                return BadRequest(new { message = ex.Message }); // 400 Bad Request
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { message = "Something went wrong", detail = ex.Message });
+            }
         }
 
         [HttpDelete("{id}")]
