@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Collections.Generic;
 using Xunit;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace CalendarAppBackend.Tests.Data
 {
@@ -20,6 +21,162 @@ namespace CalendarAppBackend.Tests.Data
             var context = new ApplicationDbContext(options);
             await context.Database.EnsureCreatedAsync();
             return context;
+        }
+
+        [Fact]
+        public async Task Constructor_InitializesDbContext()
+        {
+            // Arrange & Act
+            var context = await GetDbContextAsync();
+            
+            // Assert
+            Assert.NotNull(context);
+            Assert.NotNull(context.Database);
+        }
+
+        [Fact]
+        public async Task DbSets_AreInitialized()
+        {
+            // Arrange & Act
+            var context = await GetDbContextAsync();
+            
+            // Assert
+            Assert.NotNull(context.Users);
+            Assert.NotNull(context.Appointments);
+        }
+
+        [Fact]
+        public async Task OnModelCreating_ConfiguresAppointmentsTable()
+        {
+            // Arrange & Act
+            var context = await GetDbContextAsync();
+            var entityType = context.Model.FindEntityType(typeof(Appointment));
+            
+            // Assert
+            Assert.NotNull(entityType);
+            Assert.Equal("Appointments", entityType.GetTableName());
+        }
+
+        [Fact]
+        public void Table_Name_Is_User()
+        {
+            // Arrange
+            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
+                .UseInMemoryDatabase(Guid.NewGuid().ToString())
+                .Options;
+
+            // Act
+            using var context = new ApplicationDbContext(options);
+            var entityType = context.Model.FindEntityType(typeof(User));
+            
+            // Assert
+            Assert.Equal("Users", entityType.GetTableName());
+        }
+
+        [Fact]
+        public async Task OnModelCreating_ConfiguresUserAppointmentRelationship()
+        {
+            // Arrange & Act
+            var context = await GetDbContextAsync();
+            var appointmentEntity = context.Model.FindEntityType(typeof(Appointment));
+            var navigation = appointmentEntity.GetNavigations().FirstOrDefault(n => n.Name == nameof(Appointment.User));
+            
+            // Assert
+            Assert.NotNull(navigation);
+            var fk = navigation.ForeignKey;
+            Assert.Equal(DeleteBehavior.Cascade, fk.DeleteBehavior);
+            Assert.Equal(nameof(Appointment.UserId), fk.Properties.First().Name);
+        }
+
+        [Fact]
+        public async Task OnModelCreating_ConfiguresDateTimeConversions()
+        {
+            // Arrange & Act
+            var context = await GetDbContextAsync();
+            var appointmentEntity = context.Model.FindEntityType(typeof(Appointment));
+            var startTimeProperty = appointmentEntity.FindProperty(nameof(Appointment.StartTime));
+            var endTimeProperty = appointmentEntity.FindProperty(nameof(Appointment.EndTime));
+            
+            // Assert
+            Assert.NotNull(startTimeProperty.GetValueConverter());
+            Assert.NotNull(endTimeProperty.GetValueConverter());
+        }
+
+        [Fact]
+        public async Task DateTimeConversion_PreservesUtcKind()
+        {
+            // Arrange
+            var context = await GetDbContextAsync();
+            var user = new User { Username = "utcuser", PasswordHash = "hash" };
+            context.Users.Add(user);
+            await context.SaveChangesAsync();
+
+            // Create a specific UTC time
+            var utcNow = new DateTimeOffset(DateTime.SpecifyKind(DateTime.UtcNow, DateTimeKind.Utc));
+            
+            var appointment = new Appointment
+            {
+                Title = "UTC Test",
+                Description = "Check UTC",
+                StartTime = utcNow,
+                EndTime = utcNow.AddHours(1),
+                UserId = user.Id
+            };
+
+            // Act
+            context.Appointments.Add(appointment);
+            await context.SaveChangesAsync();
+            
+            // Clear the context to ensure we're reading from the database
+            context.ChangeTracker.Clear();
+            
+            var savedAppointment = await context.Appointments.FirstOrDefaultAsync();
+
+            // Assert
+            Assert.NotNull(savedAppointment);
+            Assert.Equal(DateTimeKind.Utc, savedAppointment.StartTime.UtcDateTime.Kind);
+            Assert.Equal(DateTimeKind.Utc, savedAppointment.EndTime.UtcDateTime.Kind);
+            Assert.Equal(utcNow.UtcDateTime, savedAppointment.StartTime.UtcDateTime);
+            Assert.Equal(utcNow.AddHours(1).UtcDateTime, savedAppointment.EndTime.UtcDateTime);
+        }
+
+        [Fact]
+        public async Task DateTimeConversion_HandlesNonUtcInput()
+        {
+            // Arrange
+            var context = await GetDbContextAsync();
+            var user = new User { Username = "localuser", PasswordHash = "hash" };
+            context.Users.Add(user);
+            await context.SaveChangesAsync();
+
+            // Create a local time (non-UTC)
+            var localTime = new DateTimeOffset(DateTime.SpecifyKind(DateTime.Now, DateTimeKind.Local));
+            
+            var appointment = new Appointment
+            {
+                Title = "Local Time Test",
+                Description = "Check conversion",
+                StartTime = localTime,
+                EndTime = localTime.AddHours(1),
+                UserId = user.Id
+            };
+
+            // Act
+            context.Appointments.Add(appointment);
+            await context.SaveChangesAsync();
+            
+            // Clear the context to ensure we're reading from the database
+            context.ChangeTracker.Clear();
+            
+            var savedAppointment = await context.Appointments.FirstOrDefaultAsync();
+
+            // Assert
+            Assert.NotNull(savedAppointment);
+            Assert.Equal(DateTimeKind.Utc, savedAppointment.StartTime.UtcDateTime.Kind);
+            Assert.Equal(DateTimeKind.Utc, savedAppointment.EndTime.UtcDateTime.Kind);
+            // The times should be equivalent when compared as UTC
+            Assert.Equal(localTime.UtcDateTime, savedAppointment.StartTime.UtcDateTime);
+            Assert.Equal(localTime.AddHours(1).UtcDateTime, savedAppointment.EndTime.UtcDateTime);
         }
 
         [Fact]
@@ -215,40 +372,6 @@ namespace CalendarAppBackend.Tests.Data
         }
 
         [Fact]
-        public async Task Appointment_Start_EndTime_Are_Utc()
-        {
-            // Arrange
-            var context = await GetDbContextAsync();
-            var user = new User { Username = "utcuser", PasswordHash = "hash" };
-            context.Users.Add(user);
-            await context.SaveChangesAsync();
-
-            var start = new DateTimeOffset(2023, 1, 1, 12, 0, 0, TimeSpan.Zero);
-            var end = new DateTimeOffset(2023, 1, 1, 13, 0, 0, TimeSpan.Zero);
-
-            var appointment = new Appointment
-            {
-                Title = "UTC Test",
-                Description = "Check UTC",
-                StartTime = start,
-                EndTime = end,
-                UserId = user.Id
-            };
-
-            // Act
-            context.Appointments.Add(appointment);
-            await context.SaveChangesAsync();
-
-            // Assert
-            var saved = await context.Appointments.FirstOrDefaultAsync();
-            Assert.NotNull(saved);
-            Assert.Equal(DateTimeKind.Utc, saved.StartTime.UtcDateTime.Kind);
-            Assert.Equal(DateTimeKind.Utc, saved.EndTime.UtcDateTime.Kind);
-            Assert.Equal(start.UtcDateTime, saved.StartTime.UtcDateTime);
-            Assert.Equal(end.UtcDateTime, saved.EndTime.UtcDateTime);
-        }
-
-        [Fact]
         public async Task Can_Query_Appointments_By_User()
         {
             // Arrange
@@ -373,88 +496,6 @@ namespace CalendarAppBackend.Tests.Data
         }
 
         [Fact]
-        public void Table_Name_Is_Appointments()
-        {
-            // Arrange
-            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-                .UseInMemoryDatabase(Guid.NewGuid().ToString())
-                .Options;
-
-            // Act
-            using var context = new ApplicationDbContext(options);
-            var entityType = context.Model.FindEntityType(typeof(Appointment));
-            
-            // Assert
-            Assert.Equal("Appointments", entityType.GetTableName());
-        }
-
-        [Fact]
-        public void Table_Name_Is_Users()
-        {
-            // Arrange
-            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-                .UseInMemoryDatabase(Guid.NewGuid().ToString())
-                .Options;
-
-            // Act
-            using var context = new ApplicationDbContext(options);
-            var entityType = context.Model.FindEntityType(typeof(User));
-            
-            // Assert
-            Assert.Equal("Users", entityType.GetTableName());
-        }
-
-        [Fact]
-        public void OnModelCreating_ConfiguresAppointmentUserRelationship()
-        {
-            // Arrange
-            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-                .UseInMemoryDatabase(Guid.NewGuid().ToString())
-                .Options;
-
-            // Act
-            using var context = new ApplicationDbContext(options);
-            var appointmentEntity = context.Model.FindEntityType(typeof(Appointment));
-            var navigation = appointmentEntity.FindNavigation(nameof(Appointment.User));
-            var fk = navigation.ForeignKey;
-            
-            // Assert
-            Assert.NotNull(fk);
-            Assert.Equal(DeleteBehavior.Cascade, fk.DeleteBehavior);
-            Assert.Equal(nameof(Appointment.UserId), fk.Properties.First().Name);
-        }
-
-        [Fact]
-        public void OnModelCreating_ConfiguresDateTimeConversions()
-        {
-            // Arrange
-            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-                .UseInMemoryDatabase(Guid.NewGuid().ToString())
-                .Options;
-
-            // Act
-            using var context = new ApplicationDbContext(options);
-            var appointmentEntity = context.Model.FindEntityType(typeof(Appointment));
-            var startTimeProperty = appointmentEntity.FindProperty(nameof(Appointment.StartTime));
-            var endTimeProperty = appointmentEntity.FindProperty(nameof(Appointment.EndTime));
-            
-            // Assert
-            Assert.NotNull(startTimeProperty.GetValueConverter());
-            Assert.NotNull(endTimeProperty.GetValueConverter());
-        }
-
-        [Fact]
-        public async Task DbSets_AreNotNull()
-        {
-            // Arrange & Act
-            var context = await GetDbContextAsync();
-            
-            // Assert
-            Assert.NotNull(context.Users);
-            Assert.NotNull(context.Appointments);
-        }
-
-        [Fact]
         public async Task Can_Add_Multiple_Users()
         {
             // Arrange
@@ -516,6 +557,90 @@ namespace CalendarAppBackend.Tests.Data
             Assert.Equal(2, savedAppointments.Count);
             Assert.Contains(savedAppointments, a => a.Title == "Meeting 1");
             Assert.Contains(savedAppointments, a => a.Title == "Meeting 2");
+        }
+
+        [Fact]
+        public async Task OnModelCreating_ConfiguresAppointmentUserRelationship()
+        {
+            // Arrange
+            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
+                .UseInMemoryDatabase(Guid.NewGuid().ToString())
+                .Options;
+
+            // Act
+            using var context = new ApplicationDbContext(options);
+            var appointmentEntity = context.Model.FindEntityType(typeof(Appointment));
+            var navigation = appointmentEntity.FindNavigation(nameof(Appointment.User));
+            var fk = navigation.ForeignKey;
+            
+            // Assert
+            Assert.NotNull(fk);
+            Assert.Equal(DeleteBehavior.Cascade, fk.DeleteBehavior);
+            Assert.Equal(nameof(Appointment.UserId), fk.Properties.First().Name);
+        }
+
+        [Fact]
+        public void OnModelCreating_ConfiguresDateTimeConverters()
+        {
+            // Arrange
+            var options = new DbContextOptionsBuilder<ApplicationDbContext>()
+                .UseInMemoryDatabase(Guid.NewGuid().ToString())
+                .Options;
+
+            // Act
+            using var context = new ApplicationDbContext(options);
+            var appointmentEntity = context.Model.FindEntityType(typeof(Appointment));
+            var startTimeProperty = appointmentEntity.FindProperty(nameof(Appointment.StartTime));
+            var endTimeProperty = appointmentEntity.FindProperty(nameof(Appointment.EndTime));
+            
+            // Assert
+            Assert.NotNull(startTimeProperty.GetValueConverter());
+            Assert.NotNull(endTimeProperty.GetValueConverter());
+        }
+
+        [Fact]
+        public async Task DbSets_AreNotNull()
+        {
+            // Arrange & Act
+            var context = await GetDbContextAsync();
+            
+            // Assert
+            Assert.NotNull(context.Users);
+            Assert.NotNull(context.Appointments);
+        }
+
+        [Fact]
+        public async Task Appointment_Start_EndTime_Are_Utc()
+        {
+            // Arrange
+            var context = await GetDbContextAsync();
+            var user = new User { Username = "utcuser", PasswordHash = "hash" };
+            context.Users.Add(user);
+            await context.SaveChangesAsync();
+
+            var start = new DateTimeOffset(2023, 1, 1, 12, 0, 0, TimeSpan.Zero);
+            var end = new DateTimeOffset(2023, 1, 1, 13, 0, 0, TimeSpan.Zero);
+
+            var appointment = new Appointment
+            {
+                Title = "UTC Test",
+                Description = "Check UTC",
+                StartTime = start,
+                EndTime = end,
+                UserId = user.Id
+            };
+
+            // Act
+            context.Appointments.Add(appointment);
+            await context.SaveChangesAsync();
+
+            // Assert
+            var saved = await context.Appointments.FirstOrDefaultAsync();
+            Assert.NotNull(saved);
+            Assert.Equal(DateTimeKind.Utc, saved.StartTime.UtcDateTime.Kind);
+            Assert.Equal(DateTimeKind.Utc, saved.EndTime.UtcDateTime.Kind);
+            Assert.Equal(start.UtcDateTime, saved.StartTime.UtcDateTime);
+            Assert.Equal(end.UtcDateTime, saved.EndTime.UtcDateTime);
         }
     }
 }

@@ -137,11 +137,6 @@ app.UseCors("AllowReactApp");
 app.MapControllers();
 app.Run();
 
-namespace CalendarAppBackend
-{
-    [ExcludeFromCodeCoverage]
-    public partial class Program
-    {
 
-    }
-}
+[ExcludeFromCodeCoverage]
+public partial class Program { }
