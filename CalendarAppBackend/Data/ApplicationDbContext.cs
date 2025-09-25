@@ -1,8 +1,11 @@
 using Microsoft.EntityFrameworkCore;
 using CalendarAppBackend.Models;
+using System.Diagnostics.CodeAnalysis;
+
 
 namespace CalendarAppBackend.Data
 {
+
     public class ApplicationDbContext : DbContext
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)

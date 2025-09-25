@@ -8,7 +8,8 @@ using Microsoft.OpenApi.Writers;
 
 using CalendarAppBackend.Helpers;           // For JwtSettings & JwtTokenGenerator
 using Microsoft.IdentityModel.Tokens;       // For TokenValidationParameters & SymmetricSecurityKey
-using System.Text;                          // For Encoding
+using System.Text;
+using System.Diagnostics.CodeAnalysis;                          // For Encoding
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -50,6 +51,7 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IAppointmentService, AppointmentService>();
+builder.Services.AddScoped<IJwtTokenGenerator,JwtTokenGenerator>();
 
 // Add Controllers
 builder.Services.AddControllers();
@@ -134,3 +136,12 @@ app.UseAuthorization();
 app.UseCors("AllowReactApp");
 app.MapControllers();
 app.Run();
+
+namespace CalendarAppBackend
+{
+    [ExcludeFromCodeCoverage]
+    public partial class Program
+    {
+
+    }
+}

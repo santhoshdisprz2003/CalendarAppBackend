@@ -6,7 +6,7 @@ using CalendarAppBackend.Models;
 
 namespace CalendarAppBackend.Helpers
 {
-    public class JwtTokenGenerator
+    public class JwtTokenGenerator:IJwtTokenGenerator
     {
         private readonly JwtSettings _settings;
 

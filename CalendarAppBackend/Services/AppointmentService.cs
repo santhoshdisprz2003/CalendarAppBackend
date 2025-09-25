@@ -1,100 +1,64 @@
-using CalendarAppBackend.Data;
-using CalendarAppBackend.Models;
-using Microsoft.EntityFrameworkCore;
+    using CalendarAppBackend.Models;
+    using CalendarAppBackend.Repositories;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using System.Threading.Tasks;
 
-namespace CalendarAppBackend.Services;
-
-public class AppointmentService : IAppointmentService
-{
-    private readonly ApplicationDbContext _context;
-
-    public AppointmentService(ApplicationDbContext context)
+    namespace CalendarAppBackend.Services
     {
-        _context = context;
+        public class AppointmentService : IAppointmentService
+        {
+            private readonly IAppointmentRepository _repository;
+
+            public AppointmentService(IAppointmentRepository repository)
+            {
+                _repository = repository;
+            }
+
+            public async Task<IEnumerable<Appointment>> GetAppointmentsByUserAsync(int userId)
+            {
+                if (userId <= 0) return Enumerable.Empty<Appointment>();
+
+                var all = await _repository.GetAppointmentsAsync();
+                return all.Where(a => a.UserId == userId);
+            }
+
+            public async Task<Appointment> CreateAppointmentAsync(Appointment appointment)
+            {
+                if (appointment == null)
+                    throw new ArgumentNullException(nameof(appointment));
+
+                if (appointment.UserId <= 0)
+                    throw new InvalidOperationException("Invalid User ID");
+
+                AppointmentValidator.Validate(appointment);
+
+                bool conflict = await _repository.HasConflictAsync(appointment, null);
+                if (conflict)
+                    throw new InvalidOperationException("This appointment conflicts with an existing one.");
+
+                return await _repository.AddAsync(appointment);
+            }
+
+            public async Task<Appointment?> UpdateAppointmentForUserAsync(int id, int userId, Appointment appointment)
+            {
+                if (userId <= 0) return null;
+
+                AppointmentValidator.Validate(appointment);
+
+                bool conflict = await _repository.HasConflictAsync(appointment, id);
+                if (conflict)
+                    throw new InvalidOperationException("This appointment conflicts with an existing one.");
+
+                return await _repository.UpdateAsync(appointment);
+            }
+
+            public async Task<bool> DeleteAppointmentForUserAsync(int id, int userId)
+            {
+                if (userId <= 0) return false;
+
+                return await _repository.DeleteAsync(id);
+            }
+        }
     }
-
-    // Get all appointments for a user
-    public async Task<IEnumerable<Appointment>> GetAppointmentsByUserAsync(int userId)
-    {
-        // Return empty list if userId is invalid
-        if (userId <= 0) return Enumerable.Empty<Appointment>();
-
-        return await _context.Appointments
-            .Where(a => a.UserId == userId)
-            .ToListAsync();
-    }
-
-    // Create a new appointment
-    public async Task<Appointment> CreateAppointmentAsync(Appointment appointment)
-    {
-        if (appointment == null)
-            throw new ArgumentNullException(nameof(appointment), "Appointment cannot be null");
-
-        if (appointment.UserId <= 0)
-            throw new InvalidOperationException("Invalid User ID");
-
-            // 🔹 Run validation here
-        AppointmentValidator.Validate(appointment);
-
-         bool hasConflict = await _context.Appointments
-        .AnyAsync(a => a.UserId == appointment.UserId &&
-                       ((appointment.StartTime < a.EndTime && appointment.EndTime > a.StartTime)));
-
-    if (hasConflict)
-        throw new InvalidOperationException("This appointment conflicts with an existing one.");
-
-
-        _context.Appointments.Add(appointment);
-        await _context.SaveChangesAsync();
-        return appointment;
-    }
-
-    // Update an existing appointment for a specific user
-    public async Task<Appointment?> UpdateAppointmentForUserAsync(int id, int userId, Appointment appointment)
-    {
-        if (userId <= 0) return null;
-
-        var existing = await _context.Appointments
-            .FirstOrDefaultAsync(a => a.Id == id && a.UserId == userId);
-
-        if (existing == null) return null;
-
-        // 🔹 Run validation here
-    AppointmentValidator.Validate(appointment);
-
-     bool hasConflict = await _context.Appointments
-        .AnyAsync(a => a.UserId == appointment.UserId &&
-                       ((appointment.StartTime < a.EndTime && appointment.EndTime > a.StartTime)));
-
-    if (hasConflict)
-        throw new InvalidOperationException("This appointment conflicts with an existing one.");
-
-
-        // Update only allowed fields
-        existing.Title = appointment.Title;
-        existing.Description = appointment.Description;
-        existing.StartTime = appointment.StartTime;
-        existing.EndTime = appointment.EndTime;
-        existing.IsAllDay = appointment.IsAllDay;
-        existing.Location = appointment.Location;
-        existing.Attendees = appointment.Attendees;
-
-        await _context.SaveChangesAsync();
-        return existing;
-    }
-
-    // Delete an appointment for a specific user
-    public async Task<bool> DeleteAppointmentForUserAsync(int id, int userId)
-    {
-        if (userId <= 0) return false;
-
-        var existing = await _context.Appointments
-            .FirstOrDefaultAsync(a => a.Id == id && a.UserId == userId);
-
-        if (existing == null) return false;
-
-        _context.Appointments.Remove(existing);
-        await _context.SaveChangesAsync();
-        return true;
-    }
-}

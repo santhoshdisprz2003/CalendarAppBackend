@@ -47,7 +47,6 @@ namespace CalendarAppBackend.Controllers
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
             if (userIdClaim == null)
                 return Unauthorized(new { message = "User not logged in" });
-
             if (!int.TryParse(userIdClaim.Value, out int userId))
                 return Unauthorized(new { message = "Invalid user ID" });
 
@@ -71,8 +70,8 @@ namespace CalendarAppBackend.Controllers
             catch (InvalidOperationException ex)
             {
                 if (ex.Message.Contains("conflicts", StringComparison.OrdinalIgnoreCase))
-                    return Conflict(new { message = ex.Message }); // 409 Conflict
-                return BadRequest(new { message = ex.Message }); // 400 Bad Request
+                    return Conflict(new { message = ex.Message });
+                return BadRequest(new { message = ex.Message });
             }
             catch (Exception ex)
             {
@@ -86,7 +85,6 @@ namespace CalendarAppBackend.Controllers
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
             if (userIdClaim == null)
                 return Unauthorized(new { message = "User not logged in" });
-
             if (!int.TryParse(userIdClaim.Value, out int userId))
                 return Unauthorized(new { message = "Invalid user ID" });
 
@@ -114,8 +112,8 @@ namespace CalendarAppBackend.Controllers
             catch (InvalidOperationException ex)
             {
                 if (ex.Message.Contains("conflicts", StringComparison.OrdinalIgnoreCase))
-                    return Conflict(new { message = ex.Message }); // 409 Conflict
-                return BadRequest(new { message = ex.Message }); // 400 Bad Request
+                    return Conflict(new { message = ex.Message });
+                return BadRequest(new { message = ex.Message });
             }
             catch (Exception ex)
             {
@@ -129,7 +127,6 @@ namespace CalendarAppBackend.Controllers
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
             if (userIdClaim == null)
                 return Unauthorized(new { message = "User not logged in" });
-
             if (!int.TryParse(userIdClaim.Value, out int userId))
                 return Unauthorized(new { message = "Invalid user ID" });
 
