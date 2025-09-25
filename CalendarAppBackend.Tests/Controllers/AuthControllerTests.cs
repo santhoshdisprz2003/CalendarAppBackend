@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using CalendarAppBackend.Controllers;
 using CalendarAppBackend.Services;
 using CalendarAppBackend.Models;
+using System.Text.Json;
 
 namespace CalendarAppBackend.Tests.Controllers
 {
@@ -61,8 +62,11 @@ namespace CalendarAppBackend.Tests.Controllers
 
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result);
-            var tokenObj = Assert.IsType<dynamic>(okResult.Value);
-            Assert.Equal("mock-token", tokenObj.Token);
+            Assert.NotNull(okResult.Value);
+            
+            // Convert to string and check if it contains the token
+            var resultString = okResult.Value.ToString();
+            Assert.Contains("mock-token", resultString);
         }
 
         [Fact]

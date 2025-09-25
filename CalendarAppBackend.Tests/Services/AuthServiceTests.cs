@@ -12,13 +12,13 @@ namespace CalendarAppBackend.Tests.Services
     public class AuthServiceTests
     {
         private readonly Mock<IUserRepository> _userRepoMock;
-        private readonly Mock<JwtTokenGenerator> _jwtMock;
+        private readonly Mock<IJwtTokenGenerator> _jwtMock;
         private readonly AuthService _authService;
 
         public AuthServiceTests()
         {
             _userRepoMock = new Mock<IUserRepository>();
-            _jwtMock = new Mock<JwtTokenGenerator>(null!); // ctor args mocked out
+            _jwtMock = new Mock<IJwtTokenGenerator>();
 
             _authService = new AuthService(_userRepoMock.Object, _jwtMock.Object);
         }
@@ -37,7 +37,7 @@ namespace CalendarAppBackend.Tests.Services
             _userRepoMock.Setup(r => r.GetByUsernameAsync("testuser"))
                          .ReturnsAsync(user);
 
-            _jwtMock.Setup(j => j.GenerateToken(user)).Returns("fake-jwt-token");
+            _jwtMock.Setup(j => j.GenerateToken(It.IsAny<User>())).Returns("fake-jwt-token");
 
             var request = new LoginRequest { Username = "testuser", Password = "password123" };
 

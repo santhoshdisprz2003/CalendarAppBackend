@@ -5,8 +5,8 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace CalendarAppBackend.Data
 {
-
-    public class ApplicationDbContext : DbContext
+    [ExcludeFromCodeCoverage]
+        public class ApplicationDbContext : DbContext
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options) { }
@@ -19,6 +19,7 @@ namespace CalendarAppBackend.Data
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<Appointment>().ToTable("Appointments");
+            modelBuilder.Entity<User>().ToTable("Users");  
 
             // Relationship: one User → many Appointments
             modelBuilder.Entity<Appointment>()

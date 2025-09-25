@@ -9,10 +9,10 @@ namespace CalendarAppBackend.Services
     public class AuthService : IAuthService
     {
         private readonly IUserRepository _userRepository;
-        private readonly JwtTokenGenerator _jwtTokenGenerator;
+        private readonly IJwtTokenGenerator _jwtTokenGenerator;
         private readonly PasswordHasher<User> _passwordHasher = new();
 
-        public AuthService(IUserRepository userRepository, JwtTokenGenerator jwtTokenGenerator)
+        public AuthService(IUserRepository userRepository, IJwtTokenGenerator jwtTokenGenerator)
         {
             _userRepository = userRepository;
             _jwtTokenGenerator = jwtTokenGenerator;

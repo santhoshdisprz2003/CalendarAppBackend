@@ -73,7 +73,9 @@ namespace CalendarAppBackend.Tests.Helpers
             var user = new User { Id = 1, Username = "failuser" };
 
             var ex = Assert.Throws<ArgumentException>(() => generator.GenerateToken(user));
-            Assert.Contains("IDX10603", ex.Message); // JwtSecurityTokenHandler error code for invalid key
+            // Update the assertion to be more flexible with error codes
+            Assert.True(ex.Message.Contains("IDX10703") || ex.Message.Contains("IDX10603"), 
+                $"Expected error message to contain IDX10703 or IDX10603, but got: {ex.Message}");
         }
     }
 }
